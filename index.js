@@ -14,6 +14,9 @@ const child_process = require('child_process');
 const clc = require('cli-color');
 const shell = require('shelljs');
 
+// color
+global.clc = clc;
+
 // shell命令
 global.shell = shell;
 Object.keys(shell).forEach(name => {

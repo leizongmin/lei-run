@@ -3,7 +3,7 @@ exports.lint = function () {
   ls('.');
   exec(`eslint . --fix`);
 
-  echo($ret);
+  echo(clc.green($ret));
 
   exit(3);
 

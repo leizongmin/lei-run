@@ -35,6 +35,9 @@ exports.lint = function () {
   // 另外启动参数也可以同$N获得（N是0到9的数字）
   echo($5);
 
+  // 可以通过clc获取cli-color模块，用于输出带颜色的文字
+  echo(clc.green('hello, world));
+
   // 结束程序并返回指定代码
   exit(3);
 
