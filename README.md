@@ -27,6 +27,8 @@ exports.lint = function () {
 
   // exec和echo命令有改动，使用方法基本相同
   exec(`eslint . --fix`);
+  // 通过$ret获取上一个命令返回的结束代码，默认为0
+  echo($ret);
 
   // 可通过argv得到启动参数数组
   // 通过env得到环境变量对象

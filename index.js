@@ -44,11 +44,16 @@ global.exec = function (cmd, opts) {
     child_process.execSync(cmd, Object.assign({
       stdio: [ 1, 2, 3 ],
     }, opts));
+    global.$ret = 0;
   } catch (err) {
     warn(err.message);
     warn('With exit code ' + err.status);
+    global.$ret = err.status;
   }
+  return global.$ret;
 };
+// 上一个命令的结束码
+global.$ret = 0;
 
 // echo命令
 global.echo = function (msg) {
