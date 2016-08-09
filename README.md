@@ -13,8 +13,8 @@ $ npm install -g lei-run
 在当前目录新建文件`tasks.run.js`：
 
 ```javascript
-// 构建目标是 lint
-exports.lint = function () {
+// 构建目标是 test
+exports.test = function () {
 
   // 命令列表可以参考shelljs
   // https://www.npmjs.com/package/shelljs
@@ -47,10 +47,10 @@ exports.lint = function () {
 };
 ```
 
-然后可以通过以下命令执行`lint`：
+然后可以通过以下命令执行`test`：
 
 ```bash
-$ run lint
+$ run test
 ```
 
 
