@@ -44,6 +44,9 @@ exports.test = function () {
   // 另外可以执行任意Node.js代码
   // 比如require('xxx')载入其他模块
 
+  // 以下内置模块已自动载入，直接使用模块名即可：fs、os、path、assert
+  // 比如echo(os.cpus());
+
 };
 ```
 

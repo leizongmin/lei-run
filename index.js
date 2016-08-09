@@ -14,6 +14,12 @@ const child_process = require('child_process');
 const clc = require('cli-color');
 const shell = require('shelljs');
 
+// 内置模块
+global.fs = require('fs');
+global.path = require('path');
+global.assert = require('assert');
+global.os = require('os');
+
 // color
 global.clc = clc;
 
@@ -36,6 +42,8 @@ Object.keys(shell).forEach(name => {
     if (r.code !== 0) {
       warn('With exit code ' + r.code);
     }
+
+    return r;
   };
 });
 

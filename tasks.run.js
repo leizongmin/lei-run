@@ -5,6 +5,8 @@ exports.lint = function () {
 
   echo(clc.green($ret));
 
+  echo(os.cpus());
+
   exit(3);
 
 };
