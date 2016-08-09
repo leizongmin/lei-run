@@ -4,6 +4,8 @@ exports.lint = function () {
   ls('.');
   exec(`eslint . --fix`);
 
-  exit(2);
+  echo($5);
+
+  exit(3);
 
 };
