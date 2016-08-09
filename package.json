@@ -1,6 +1,6 @@
 {
   "name": "lei-run",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "task manager",
   "main": "index.js",
   "scripts": {

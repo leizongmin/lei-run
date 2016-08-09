@@ -19,11 +19,11 @@ exports.test = function () {
   // 命令列表可以参考shelljs
   // https://www.npmjs.com/package/shelljs
   // 与shelljs的区别是，命令执行完毕后会自动打印结果
-  cat('README.md');
-  ls('.');
+  cat(`README.md`);
+  ls(`.`);
 
   // 另外可以通过shell对象操作shelljs
-  shelljs.ls('ls');
+  shelljs.ls(`.`);
 
   // exec和echo命令有改动，使用方法基本相同
   exec(`eslint . --fix`);
@@ -36,7 +36,7 @@ exports.test = function () {
   echo($5);
 
   // 可以通过clc获取cli-color模块，用于输出带颜色的文字
-  echo(clc.green('hello, world));
+  echo(clc.green(`hello, world`));
 
   // 结束程序并返回指定代码
   exit(3);
