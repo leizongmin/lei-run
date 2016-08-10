@@ -13,39 +13,41 @@ const path = require('path');
 const child_process = require('child_process');
 const clc = require('cli-color');
 const shell = require('shelljs');
+const rd = require('rd');
+const utils = require('lei-utils');
 
 // 内置模块
 global.fs = require('fs');
 global.path = require('path');
 global.assert = require('assert');
 global.os = require('os');
-
-// color
+global.shell = shell;
+global.rd = rd;
 global.clc = clc;
+global.utils = utils;
 
 // shell命令
-global.shell = shell;
-Object.keys(shell).forEach(name => {
-  global[name] = function () {
+// Object.keys(shell).forEach(name => {
+//   global[name] = function () {
 
-    line();
-    const args = Array.prototype.slice.call(arguments);
-    log([ name ].concat(args).join(' '));
+//     line();
+//     const args = Array.prototype.slice.call(arguments);
+//     log([ name ].concat(args).join(' '));
 
-    const r = shell[name].apply(shell, args);
-    if (r.stdout) {
-      console.log(r.stdout);
-    }
-    if (r.stderr) {
-      warn(r.stderr);
-    }
-    if (r.code !== 0) {
-      warn('with exit code ' + r.code);
-    }
+//     const r = shell[name].apply(shell, args);
+//     if (r.stdout) {
+//       console.log(r.stdout);
+//     }
+//     if (r.stderr) {
+//       warn(r.stderr);
+//     }
+//     if (r.code !== 0) {
+//       warn('with exit code ' + r.code);
+//     }
 
-    return r;
-  };
-});
+//     return r;
+//   };
+// });
 
 // exec命令
 global.exec = function (cmd, opts) {
@@ -66,12 +68,18 @@ global.exec = function (cmd, opts) {
 // 上一个命令的结束码
 global.$ret = 0;
 
-// echo命令
-global.echo = function (msg) {
-  console.log(msg);
+// 顺序执行多条命令，如果其中一个失败则直接返回
+global.mexec = function (cmds, opts) {
+  for (const cmd of cmds) {
+    if (global.exec(cmd, opts) !== 0) {
+      break;
+    }
+  }
+  return global.$ret;
 };
+
 // print命令
-global.print = global.echo;
+global.print = console.log;
 
 // 启动参数
 global.argv = process.argv.slice(3);
@@ -158,7 +166,7 @@ global.run = function (name) {
   line(8);
   const handler = tasks[name];
   if (!handler) die(`task "${ name } not found.`);
-  log('task "${ name }" starting...');
+  log(`task "${ name }" starting...`);
   handler();
   const s = process.uptime() - t;
   log(`task "${ name }" done. (in ${ s.toFixed(3) }s)`);
@@ -174,8 +182,6 @@ global.register('--init', function () {
   }
   fs.writeFileSync(file, `
 register('info', function () {
-  ls('.');
-  cat('README.md');
   const cpus = os.cpus();
   for (const cpu of cpus) {
     print(cpu.model);
@@ -188,6 +194,7 @@ register('test', function () {
 });
 
 register('all', function () {
+  print(utils.date('Y-m-d H:i:s'));
   run('info');
   run('test');
 });

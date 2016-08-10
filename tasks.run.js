@@ -1,6 +1,4 @@
 register('info', function () {
-  ls('.');
-  cat('README.md');
   const cpus = os.cpus();
   for (const cpu of cpus) {
     print(cpu.model);
@@ -13,6 +11,7 @@ register('test', function () {
 });
 
 register('all', function () {
+  print(utils.date('Y-m-d H:i:s'));
   run('info');
   run('test');
 });

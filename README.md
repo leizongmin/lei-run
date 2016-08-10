@@ -16,27 +16,24 @@ $ npm install -g lei-run
 // 注册任务test
 register('test', function () {
 
-  // 命令列表可以参考shelljs
-  // https://www.npmjs.com/package/shelljs
-  // 与shelljs的区别是，命令执行完毕后会自动打印结果
-  cat(`README.md`);
-  ls(`.`);
-
-  // 另外可以通过shell对象操作shelljs
-  shelljs.ls(`.`);
-
-  // exec和echo命令有改动，使用方法基本相同
+  // 执行命令
   exec(`eslint . --fix`);
   // 通过$ret获取上一个命令返回的结束代码，默认为0
-  echo($ret);
+  print($ret);
+
+  // 顺序执行多条命令，详当于 cmd1 && cmd2 && cmd3
+  mexec([
+    'ls .',
+    'cat README.md',
+  ]);
 
   // 可通过argv得到启动参数数组
   // 通过env得到环境变量对象
   // 另外启动参数也可以同$N获得（N是0到9的数字）
-  echo($5);
+  print($5);
 
   // 可以通过clc获取cli-color模块，用于输出带颜色的文字
-  echo(clc.green(`hello, world`));
+  print(clc.green(`hello, world`));
 
   // 结束程序并返回指定代码
   // exit(3);
@@ -45,7 +42,7 @@ register('test', function () {
   // 比如require('xxx')载入其他模块
 
   // 以下内置模块已自动载入，直接使用模块名即可：fs、os、path、assert
-  // 比如echo(os.cpus());
+  // 比如print(os.cpus());
 
 });
 
@@ -87,6 +84,40 @@ $ run
 ```bash
 $ run --init
 ```
+
+## API
+
+### 全局模块
+
++ `fs` - https://nodejs.org/api/fs.html
++ `path` - https://nodejs.org/api/path.html
++ `assert` - https://nodejs.org/api/assert.html
++ `os` - https://nodejs.org/api/os.html
++ `shell` - https://www.npmjs.com/package/shelljs
++ `rd` - https://www.npmjs.com/package/rd
++ `clc` - https://www.npmjs.com/package/cli-color
++ `utils` - https://www.npmjs.com/package/lei-utils
+
+可直接使用，比如：
+
+```javascript
+console.log(os.cpus());
+```
+
+### 全局函数
+
++ `register(name, handler)` - 注册任务
++ `run(name)` - 执行任务
++ `exec(cmd[, opts])` - 以同步方式执行命令，并自动打印结果，返回命令的结束代码（成功为`0`）
++ `mexec(cmds[, opts])` - 使用`exec()`依次执行多条命令，如果有命令返回的代码不为`0`则返回
++ `print(msg)` - 打印内容到控制台
+
+### 全局变量
+
++ `env` - 环境变量
++ `argv` - 启动参数
++ `$0` ~ `$9` - 第`0`至`9`个启动参数
++ `$ret` - 上一条使用`exec()`执行的命令的返回代码
 
 
 ## License
