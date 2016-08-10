@@ -1,12 +1,14 @@
-exports.lint = function () {
-
+register('lint', function () {
   ls('.');
   exec(`eslint . --fix`);
-
   echo(clc.green($ret));
+});
 
+register('cpus', function () {
   echo(os.cpus());
+});
 
-  exit(3);
-
-};
+register('all', function () {
+  run('lint');
+  run('cpus');
+});

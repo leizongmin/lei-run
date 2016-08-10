@@ -40,7 +40,7 @@ Object.keys(shell).forEach(name => {
       warn(r.stderr);
     }
     if (r.code !== 0) {
-      warn('With exit code ' + r.code);
+      warn('with exit code ' + r.code);
     }
 
     return r;
@@ -58,7 +58,7 @@ global.exec = function (cmd, opts) {
     global.$ret = 0;
   } catch (err) {
     warn(err.message);
-    warn('With exit code ' + err.status);
+    warn('with exit code ' + err.status);
     global.$ret = err.status;
   }
   return global.$ret;
@@ -70,6 +70,8 @@ global.$ret = 0;
 global.echo = function (msg) {
   console.log(msg);
 };
+// print命令
+global.print = global.echo;
 
 // 启动参数
 global.argv = process.argv.slice(3);
@@ -110,18 +112,22 @@ function die(msg, code) {
   process.exit(code || 1);
 }
 
-function line() {
-  console.log(clc.blackBright('================================================================'));
+function line(n) {
+  const size = n || 4;
+  let str = '';
+  for (let i = 0; i < size; i++) {
+    str += '==========';
+  }
+  console.log(clc.blackBright(str));
 }
 
 // 进程退出信息
 process.on('exit', function (code) {
+  line(8);
   if (code === 0) {
-    console.log('');
-    log('All done.');
-    console.log('');
+    log(`all done. (in ${ process.uptime() }s)`);
   } else {
-    die('Exit code ' + code);
+    error('exit code ' + code);
   }
 });
 
@@ -136,29 +142,40 @@ process.on('unhandledRejection', function (err) {
 // 查找当前目录下的 tasks.run.js 文件
 const file = path.resolve('tasks.run.js');
 if (!fs.existsSync(file)) {
-  die('*** No targets specified and no "tasks.run.js" found.  Stop.');
+  die('no targets specified and no "tasks.run.js" found.  Stop.');
 }
 
 // 获取构建目标
-const target = process.argv[2];
+const target = process.argv[2] || 'all';
 global.target = target;
-if (!target) {
-  die('*** No targets specified and no "tasks.run.js" found.  Stop.');
-}
+
+const tasks = global.tasks = {};
+
+// 注册任务
+global.register = function (name, handler) {
+  if (tasks[name]) die(`task "${ name }" has been registered.  Stop.`);
+  if (typeof handler !== 'function') die(`task handler "${ name }" is not a function.  Stop.`);
+  tasks[name] = handler;
+};
+
+// 执行任务
+global.run = function (name) {
+  const t = process.uptime();
+  line(8);
+  const handler = tasks[name];
+  if (!handler) die(`task "${ name } not found.  Stop.`);
+  log('task "${ name }" starting...');
+  handler();
+  const s = process.uptime() - t;
+  log(`task "${ name }" done. (in ${ s.toFixed(3) }s)`);
+};
 
 // 载入任务文件
-let tasks;
 try {
-  tasks = require(file);
+  require(file);
 } catch (err) {
   console.log(err && err.stack);
-  die('Failed to load "tasks.run.js".  Stop.');
+  die('failed to load "tasks.run.js".  Stop.');
 }
 
-const method = tasks[target];
-if (typeof method !== 'function') {
-  die('*** No targets specified and no "tasks.run.js" found.  Stop.');
-}
-
-log('target ' + target);
-method();
+global.run(target);

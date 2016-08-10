@@ -13,8 +13,8 @@ $ npm install -g lei-run
 在当前目录新建文件`tasks.run.js`：
 
 ```javascript
-// 构建目标是 test
-exports.test = function () {
+// 注册任务test
+register('test', function () {
 
   // 命令列表可以参考shelljs
   // https://www.npmjs.com/package/shelljs
@@ -39,7 +39,7 @@ exports.test = function () {
   echo(clc.green(`hello, world`));
 
   // 结束程序并返回指定代码
-  exit(3);
+  // exit(3);
 
   // 另外可以执行任意Node.js代码
   // 比如require('xxx')载入其他模块
@@ -47,13 +47,39 @@ exports.test = function () {
   // 以下内置模块已自动载入，直接使用模块名即可：fs、os、path、assert
   // 比如echo(os.cpus());
 
-};
+});
+
+// 注册任务test2
+register('test2', function () {
+
+  // 打印出所有参数
+  for (const v of argv) {
+    print(v);
+  }
+
+});
+
+// 注册任务all
+register('all', function () {
+
+  // 分别之前以上两个任务
+  run('test');
+  run('test2');
+
+});
 ```
 
-然后可以通过以下命令执行`test`：
+然后可以通过以下命令执行任务`test`：
 
 ```bash
 $ run test
+```
+
+如果执行时没有指定任务名称，则默认为`all`：
+
+```bash
+$ run
+# 相当于 run all
 ```
 
 
