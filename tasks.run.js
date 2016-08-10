@@ -16,3 +16,10 @@ register('all', function () {
   run('info');
   run('test');
 });
+
+register('publish', function () {
+  exec('eslint . --fix');
+  if ($ret === 0) {
+    exec('npm publish');
+  }
+});
