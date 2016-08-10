@@ -82,6 +82,12 @@ $ run
 # 相当于 run all
 ```
 
+如果当前目录没有`tasks.run.js`文件，也可执行以下命令自动生成一个初始的文件：
+
+```bash
+$ run --init
+```
+
 
 ## License
 

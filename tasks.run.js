@@ -1,14 +1,18 @@
-register('lint', function () {
+register('info', function () {
   ls('.');
-  exec(`eslint . --fix`);
-  echo(clc.green($ret));
+  cat('README.md');
+  const cpus = os.cpus();
+  for (const cpu of cpus) {
+    print(cpu.model);
+  }
 });
 
-register('cpus', function () {
-  echo(os.cpus());
+register('test', function () {
+  exec('npm info');
+  exec('npm test');
 });
 
 register('all', function () {
-  run('lint');
-  run('cpus');
+  run('info');
+  run('test');
 });

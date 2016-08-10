@@ -139,12 +139,6 @@ process.on('unhandledRejection', function (err) {
   error('unhandledRejection: ' + (err && err.stack));
 });
 
-// 查找当前目录下的 tasks.run.js 文件
-const file = path.resolve('tasks.run.js');
-if (!fs.existsSync(file)) {
-  die('no targets specified and no "tasks.run.js" found.  Stop.');
-}
-
 // 获取构建目标
 const target = process.argv[2] || 'all';
 global.target = target;
@@ -153,8 +147,8 @@ const tasks = global.tasks = {};
 
 // 注册任务
 global.register = function (name, handler) {
-  if (tasks[name]) die(`task "${ name }" has been registered.  Stop.`);
-  if (typeof handler !== 'function') die(`task handler "${ name }" is not a function.  Stop.`);
+  if (tasks[name]) die(`task "${ name }" has been registered.`);
+  if (typeof handler !== 'function') die(`task handler "${ name }" is not a function.`);
   tasks[name] = handler;
 };
 
@@ -163,19 +157,59 @@ global.run = function (name) {
   const t = process.uptime();
   line(8);
   const handler = tasks[name];
-  if (!handler) die(`task "${ name } not found.  Stop.`);
+  if (!handler) die(`task "${ name } not found.`);
   log('task "${ name }" starting...');
   handler();
   const s = process.uptime() - t;
   log(`task "${ name }" done. (in ${ s.toFixed(3) }s)`);
 };
 
-// 载入任务文件
-try {
-  require(file);
-} catch (err) {
-  console.log(err && err.stack);
-  die('failed to load "tasks.run.js".  Stop.');
+// 当前目录下的 tasks.run.js 文件
+const file = path.resolve('tasks.run.js');
+
+// 自动初始化 tasks.run.js 文件
+global.register('--init', function () {
+  if (fs.existsSync(file)) {
+    die('file "tasks.run.js" is already exists.');
+  }
+  fs.writeFileSync(file, `
+register('info', function () {
+  ls('.');
+  cat('README.md');
+  const cpus = os.cpus();
+  for (const cpu of cpus) {
+    print(cpu.model);
+  }
+});
+
+register('test', function () {
+  exec('npm info');
+  exec('npm test');
+});
+
+register('all', function () {
+  run('info');
+  run('test');
+});
+  `.trim());
+  log(`write file "${ file }".`);
+});
+
+if (target !== '--init') {
+
+  // 检查 tasks.run.js 文件是否存在
+  if (!fs.existsSync(file)) {
+    die('no "tasks.run.js" found.');
+  }
+
+  // 载入任务文件
+  try {
+    require(file);
+  } catch (err) {
+    console.log(err && err.stack);
+    die('failed to load "tasks.run.js".');
+  }
 }
 
+// 执行任务
 global.run(target);
