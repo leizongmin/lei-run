@@ -26,39 +26,18 @@ global.rd = rd;
 global.clc = clc;
 global.utils = utils;
 
-// shell命令
-// Object.keys(shell).forEach(name => {
-//   global[name] = function () {
-
-//     line();
-//     const args = Array.prototype.slice.call(arguments);
-//     log([ name ].concat(args).join(' '));
-
-//     const r = shell[name].apply(shell, args);
-//     if (r.stdout) {
-//       console.log(r.stdout);
-//     }
-//     if (r.stderr) {
-//       warn(r.stderr);
-//     }
-//     if (r.code !== 0) {
-//       warn('with exit code ' + r.code);
-//     }
-
-//     return r;
-//   };
-// });
-
 // exec命令
 global.exec = function (cmd, opts) {
   line();
   log(cmd);
+  emptyLine();
   try {
     child_process.execSync(cmd, Object.assign({
-      stdio: [ 1, 2, 3 ],
+      stdio: [ 0, 1, 2 ],
     }, opts));
     global.$ret = 0;
   } catch (err) {
+    emptyLine();
     warn(err.message);
     warn('with exit code ' + err.status);
     global.$ret = err.status;
@@ -102,17 +81,17 @@ global.exit = function (code) {
 
 // 打印信息
 function log(msg) {
-  console.log(clc.green('run: ' + msg));
+  console.log(clc.green('> ' + msg));
 }
 
 function warn(msg) {
-  console.log(clc.yellow('run: ' + msg));
+  console.log(clc.yellow('> ' + msg));
 }
 
 function error(msg) {
-  console.log('');
-  console.log(clc.red('run: ' + msg));
-  console.log('');
+  emptyLine();
+  console.log(clc.red('> ' + msg));
+  emptyLine();
 }
 
 function die(msg, code) {
@@ -124,9 +103,13 @@ function line(n) {
   const size = n || 4;
   let str = '';
   for (let i = 0; i < size; i++) {
-    str += '==========';
+    str += '----------';
   }
   console.log(clc.blackBright(str));
+}
+
+function emptyLine() {
+  console.log('');
 }
 
 // 进程退出信息
