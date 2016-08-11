@@ -99,13 +99,22 @@ function die(msg, code) {
   process.exit(code || 1);
 }
 
-function line(n) {
-  const size = n || 4;
+function generateLine(n) {
   let str = '';
-  for (let i = 0; i < size; i++) {
+  for (let i = 0; i < n; i++) {
     str += '----------';
   }
-  console.log(clc.blackBright(str));
+  return clc.blackBright(str);
+}
+
+function line() {
+  console.log(generateLine(4));
+}
+
+function longLine() {
+  emptyLine();
+  console.log(generateLine(8));
+  emptyLine();
 }
 
 function emptyLine() {
@@ -114,7 +123,7 @@ function emptyLine() {
 
 // 进程退出信息
 process.on('exit', function (code) {
-  line(8);
+  longLine();
   if (code === 0) {
     log(`all done. (in ${ process.uptime() }s)`);
   } else {
@@ -146,12 +155,13 @@ global.register = function (name, handler) {
 // 执行任务
 global.run = function (name) {
   const t = process.uptime();
-  line(8);
+  longLine();
   const handler = tasks[name];
   if (!handler) die(`task "${ name } not found.`);
   log(`task "${ name }" starting...`);
   handler();
   const s = process.uptime() - t;
+  emptyLine();
   log(`task "${ name }" done. (in ${ s.toFixed(3) }s)`);
 };
 
