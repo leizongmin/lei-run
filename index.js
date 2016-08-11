@@ -31,10 +31,12 @@ global.exec = function (cmd, opts) {
   line();
   log(cmd);
   emptyLine();
+  const execOpts = Object({}, opts);
+  execOpts.stdio = execOpts.stdio || [ 0, 1, 2 ];
+  execOpts.env = Object.assign({}, execOpts.env || process.env || {});
+  execOpts.env.PATH = path.resolve('./node_modules/.bin') + ':' + execOpts.env.PATH;
   try {
-    child_process.execSync(cmd, Object.assign({
-      stdio: [ 0, 1, 2 ],
-    }, opts));
+    child_process.execSync(cmd, execOpts);
     global.$ret = 0;
   } catch (err) {
     emptyLine();
@@ -174,22 +176,14 @@ global.register('--init', function () {
     die('file "tasks.run.js" is already exists.');
   }
   fs.writeFileSync(file, `
-register('info', function () {
-  const cpus = os.cpus();
-  for (const cpu of cpus) {
-    print(cpu.model);
-  }
-});
+'use strict';
 
 register('test', function () {
-  exec('npm info');
-  exec('npm test');
+  exec('mocha');
 });
 
 register('all', function () {
-  print(utils.date('Y-m-d H:i:s'));
-  run('info');
-  run('test');
+  print('now is ' + utils.date('Y-m-d H:i:s'));
 });
   `.trim());
   log(`write file "${ file }".`);
