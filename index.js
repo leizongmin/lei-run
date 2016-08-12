@@ -199,7 +199,7 @@ try {
 function showTasks() {
   const names = Object.keys(tasks);
   if (names.length > 0) {
-    emptyLine();
+    longLine();
     console.log(`total ${ names.length } tasks:`);
     emptyLine();
     for (const name of names) {
@@ -213,7 +213,7 @@ function showTasks() {
     console.log('for example:');
     emptyLine();
     console.log('\t ' + color.magenta.bold('run ' + color.blue(names[0])));
-    emptyLine();
+    longLine();
   } else {
     error('there is no task has been registered in file "tasks.run.js".');
   }
