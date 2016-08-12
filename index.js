@@ -11,7 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
-const clc = require('cli-color');
+const color = require('cli-color');
 const shell = require('shelljs');
 const rd = require('rd');
 const utils = require('lei-utils');
@@ -23,7 +23,7 @@ global.assert = require('assert');
 global.os = require('os');
 global.shell = shell;
 global.rd = rd;
-global.clc = clc;
+global.color = color;
 global.utils = utils;
 
 // exec命令
@@ -83,16 +83,16 @@ global.exit = function (code) {
 
 // 打印信息
 function log(msg) {
-  console.log(clc.green('> ' + msg));
+  console.log(color.green('> ' + msg));
 }
 
 function warn(msg) {
-  console.log(clc.yellow('> ' + msg));
+  console.log(color.yellow('> ' + msg));
 }
 
 function error(msg) {
   emptyLine();
-  console.log(clc.red('> ' + msg));
+  console.log(color.red('> ' + msg));
   emptyLine();
 }
 
@@ -106,7 +106,7 @@ function generateLine(n) {
   for (let i = 0; i < n; i++) {
     str += '----------';
   }
-  return clc.blackBright(str);
+  return color.blackBright(str);
 }
 
 function line() {
@@ -123,16 +123,6 @@ function emptyLine() {
   console.log('');
 }
 
-// 进程退出信息
-process.on('exit', function (code) {
-  longLine();
-  if (code === 0) {
-    log(`all done. (in ${ process.uptime() }s)`);
-  } else {
-    error('exit code ' + code);
-  }
-});
-
 // 异常信息
 process.on('uncaughtException', function (err) {
   error('uncaughtException: ' + (err && err.stack));
@@ -142,7 +132,7 @@ process.on('unhandledRejection', function (err) {
 });
 
 // 获取构建目标
-const target = process.argv[2] || 'all';
+const target = process.argv[2];
 global.target = target;
 
 const tasks = global.tasks = {};
@@ -161,6 +151,7 @@ global.run = function (name) {
   const handler = tasks[name];
   if (!handler) die(`task "${ name } not found.`);
   log(`task "${ name }" starting...`);
+  emptyLine();
   handler();
   const s = process.uptime() - t;
   emptyLine();
@@ -171,39 +162,77 @@ global.run = function (name) {
 const file = path.resolve('tasks.run.js');
 
 // 自动初始化 tasks.run.js 文件
-global.register('--init', function () {
+function generateTasksFile() {
+  emptyLine();
   if (fs.existsSync(file)) {
     die('file "tasks.run.js" is already exists.');
   }
   fs.writeFileSync(file, `
 'use strict';
 
-register('test', function () {
-  exec('mocha');
-});
-
-register('all', function () {
-  print('now is ' + utils.date('Y-m-d H:i:s'));
+register('hello', function () {
+  print('Hello, now is ' + color.yellow(utils.date('Y-m-d H:i:s')));
 });
   `.trim());
   log(`write file "${ file }".`);
-});
+}
 
-if (target !== '--init') {
+if (target === '--init') {
+  generateTasksFile();
+  process.exit();
+}
 
-  // 检查 tasks.run.js 文件是否存在
-  if (!fs.existsSync(file)) {
-    die('no "tasks.run.js" found.');
-  }
+// 检查 tasks.run.js 文件是否存在
+if (!fs.existsSync(file)) {
+  die('no "tasks.run.js" found.');
+}
 
-  // 载入任务文件
-  try {
-    require(file);
-  } catch (err) {
-    console.log(err && err.stack);
-    die('failed to load "tasks.run.js".');
+// 载入任务文件
+try {
+  require(file);
+} catch (err) {
+  console.log(err && err.stack);
+  die('failed to load "tasks.run.js".');
+}
+
+// 显示tasks列表
+function showTasks() {
+  const names = Object.keys(tasks);
+  if (names.length > 0) {
+    emptyLine();
+    console.log(`total ${ names.length } tasks:`);
+    emptyLine();
+    for (const name of names) {
+      console.log('\t ' + color.blue(name));
+    }
+    emptyLine();
+    console.log('type the following command to run a task:');
+    emptyLine();
+    console.log('\t ' + color.magenta.bold('run ' + color.blue('<task>')));
+    emptyLine();
+    console.log('for example:');
+    emptyLine();
+    console.log('\t ' + color.magenta.bold('run ' + color.blue(names[0])));
+    emptyLine();
+  } else {
+    error('there is no task has been registered in file "tasks.run.js".');
   }
 }
 
-// 执行任务
-global.run(target);
+if (target) {
+
+  // 进程退出信息
+  process.on('exit', function (code) {
+    longLine();
+    if (code === 0) {
+      log(`all done. (in ${ process.uptime() }s)`);
+    } else {
+      error('exit code ' + code);
+    }
+  });
+
+  global.run(target);
+
+} else {
+  showTasks();
+}

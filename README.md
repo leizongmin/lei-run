@@ -72,13 +72,6 @@ register('all', function () {
 $ run test
 ```
 
-如果执行时没有指定任务名称，则默认为`all`：
-
-```bash
-$ run
-# 相当于 run all
-```
-
 如果当前目录没有`tasks.run.js`文件，也可执行以下命令自动生成一个初始的文件：
 
 ```bash
@@ -95,7 +88,7 @@ $ run --init
 + `os` - https://nodejs.org/api/os.html
 + `shell` - https://www.npmjs.com/package/shelljs
 + `rd` - https://www.npmjs.com/package/rd
-+ `clc` - https://www.npmjs.com/package/cli-color
++ `color` - https://www.npmjs.com/package/cli-color
 + `utils` - https://www.npmjs.com/package/lei-utils
 
 可直接使用，比如：
