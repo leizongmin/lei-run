@@ -83,16 +83,16 @@ global.exit = function (code) {
 
 // 打印信息
 function log(msg) {
-  console.log(color.green('> ' + msg));
+  console.log(color.blackBright('>>> ') + color.green(msg));
 }
 
 function warn(msg) {
-  console.log(color.yellow('> ' + msg));
+  console.log(color.blackBright('>>> ') + color.yellow(msg));
 }
 
 function error(msg) {
   emptyLine();
-  console.log(color.red('> ' + msg));
+  console.log(color.blackBright('>>> ') + color.red(msg));
   emptyLine();
 }
 
