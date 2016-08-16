@@ -137,11 +137,19 @@ global.target = target;
 
 const tasks = global.tasks = {};
 
-// 注册任务
-global.register = function (name, handler) {
+// 注册任务  register(name, [description, ] handler)
+global.register = function () {
+  const name = arguments[0];
+  let handler = arguments[1];
+  let description = '';
+  if (arguments.length > 2) {
+    description = arguments[1];
+    handler = arguments[2];
+  }
   if (tasks[name]) die(`task "${ name }" has been registered.`);
   if (typeof handler !== 'function') die(`task handler "${ name }" is not a function.`);
   tasks[name] = handler;
+  tasks[name].description = description;
 };
 
 // 执行任务
@@ -204,6 +212,10 @@ function showTasks() {
     emptyLine();
     for (const name of names) {
       console.log('\t ' + color.blue(name));
+      const fn = tasks[name];
+      if (fn.description) {
+        console.log(color.green('\t   -- ' + fn.description));
+      }
     }
     emptyLine();
     console.log('type the following command to run a task:');
