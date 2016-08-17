@@ -81,18 +81,23 @@ global.exit = function (code) {
   process.exit(code);
 };
 
+// 返回当前时间字符串
+function time() {
+  return utils.date('[H:i:s]');
+}
+
 // 打印信息
 function log(msg) {
-  console.log(color.blackBright('>>> ') + color.blackBright(msg));
+  console.log(color.blackBright(`>>> ${ time() }\t`) + color.blackBright(msg));
 }
 
 function warn(msg) {
-  console.log(color.blackBright('>>> ') + color.yellow(msg));
+  console.log(color.blackBright(`>>> ${ time() }\t`) + color.yellow(msg));
 }
 
 function error(msg) {
   emptyLine();
-  console.log(color.blackBright('>>> ') + color.red(msg));
+  console.log(color.blackBright(`>>> ${ time() }\t`) + color.red(msg));
   emptyLine();
 }
 
