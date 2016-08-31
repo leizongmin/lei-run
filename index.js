@@ -81,6 +81,23 @@ global.exit = function (code) {
   process.exit(code);
 };
 
+// 当前工作目录
+Object.defineProperty(global, 'pwd', {
+  get() {
+    return process.cwd();
+  },
+  set(dir) {
+    process.chdir(dir);
+  },
+});
+
+// 取进程已启动的时间
+Object.defineProperty(global, 'uptime', {
+  get() {
+    return process.uptime();
+  },
+});
+
 // 返回当前时间字符串
 function time() {
   return utils.date('[H:i:s]');
