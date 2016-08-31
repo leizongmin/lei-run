@@ -97,16 +97,18 @@ $ run --init
 console.log(os.cpus());
 ```
 
-### 注册任务函数
+### 注册任务
 
 + `register(name, handler)` - 注册任务
 + `run(name)` - 执行任务
++ `target` - 构建目标
 
 ### 全局函数
 
 + `exec(cmd[, opts])` - 以同步方式执行命令，并自动打印结果，返回命令的结束代码（成功为`0`）
 + `mexec(cmds[, opts])` - 使用`exec()`依次执行多条命令，如果有命令返回的代码不为`0`则返回
 + `print(msg)` - 打印内容到控制台
++ `onExit(fn)` - 当进程退出时执行
 
 ### 全局变量
 

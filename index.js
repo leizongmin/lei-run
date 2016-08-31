@@ -81,6 +81,11 @@ global.exit = function (code) {
   process.exit(code);
 };
 
+// 当进程退出时执行函数
+global.onExit = function (fn) {
+  process.on('exit', fn);
+};
+
 // 当前工作目录
 Object.defineProperty(global, 'pwd', {
   get() {
@@ -155,7 +160,11 @@ process.on('unhandledRejection', function (err) {
 
 // 获取构建目标
 const target = process.argv[2];
-global.target = target;
+Object.defineProperty(global, 'target', {
+  get() {
+    return target;
+  },
+});
 
 const tasks = global.tasks = {};
 
