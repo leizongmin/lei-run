@@ -109,6 +109,7 @@ console.log(os.cpus());
 + `mexec(cmds[, opts])` - 使用`exec()`依次执行多条命令，如果有命令返回的代码不为`0`则返回
 + `print(msg)` - 打印内容到控制台
 + `onExit(fn)` - 当进程退出时执行
++ `exit([code, msg])` - 退出进程
 
 ### 全局变量
 

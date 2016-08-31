@@ -77,7 +77,10 @@ for (let i = 0; i < 10; i++) {
 global.env = process.env;
 
 // 退出进程
-global.exit = function (code) {
+global.exit = function (code, msg) {
+  if (msg) {
+    console.log(color.red(msg));
+  }
   process.exit(code);
 };
 
