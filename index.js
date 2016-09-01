@@ -229,14 +229,6 @@ if (!fs.existsSync(file)) {
   die('no "tasks.run.js" found.');
 }
 
-// 载入任务文件
-try {
-  require(file);
-} catch (err) {
-  console.log(err && err.stack);
-  die('failed to load "tasks.run.js".');
-}
-
 // 显示tasks列表
 function showTasks() {
   const names = Object.keys(tasks);
@@ -265,20 +257,37 @@ function showTasks() {
   }
 }
 
-if (target) {
+function runTarget() {
+  if (target) {
 
-  // 进程退出信息
-  process.on('exit', function (code) {
-    longLine();
-    if (code === 0) {
-      log(`all done. (in ${ process.uptime() }s)`);
-    } else {
-      error('exit code ' + code);
-    }
-  });
+    // 进程退出信息
+    process.on('exit', function (code) {
+      longLine();
+      if (code === 0) {
+        log(`all done. (in ${ process.uptime() }s)`);
+      } else {
+        error('exit code ' + code);
+      }
+    });
 
-  global.run(target);
+    global.run(target);
 
+  } else {
+    showTasks();
+  }
+}
+
+
+if (module.parent) {
+  // 如果是载入模块的方式，则在 nextTick 之后再执行
+  process.nextTick(runTarget);
 } else {
-  showTasks();
+  // 载入任务文件
+  try {
+    require(file);
+  } catch (err) {
+    console.log(err && err.stack);
+    die('failed to load "tasks.run.js".');
+  }
+  runTarget();
 }

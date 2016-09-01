@@ -78,6 +78,30 @@ $ run test
 $ run --init
 ```
 
+
+## 以模块的方式使用
+
+新建任务文件`task.js`：
+
+```javascript
+'use strict';
+
+// 载入模块
+require('lei-run');
+
+// 以下使用方法不变
+register('test', function () {
+  print(color.yellow('hello, world'));
+});
+```
+
+执行任务：
+
+```bash
+$ node task.js test
+```
+
+
 ## API
 
 ### 全局模块
