@@ -22,3 +22,8 @@ register('publish', function () {
     exec('npm publish');
   }
 });
+
+register('async', function () {
+  aexec('say -v Ting-ting "启动本地测试程序"');
+  run('info');
+});
