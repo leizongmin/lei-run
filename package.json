@@ -2,15 +2,15 @@
   "name": "lei-run",
   "version": "1.5.0",
   "description": "task manager",
-  "main": "index.js",
+  "main": "lib/index.js",
   "files": [
-    "index.js"
+    "lib"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "run": "index.js"
+    "run": "lib/index.js"
   },
   "repository": {
     "type": "git",
