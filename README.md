@@ -1,5 +1,7 @@
 # 基于Node.js的构建工具
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/leizongmin/lei-run.svg)](https://greenkeeper.io/)
+
 
 ## 安装
 
