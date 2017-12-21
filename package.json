@@ -24,8 +24,8 @@
   "homepage": "https://github.com/leizongmin/lei-run#readme",
   "dependencies": {
     "cli-color": "^1.1.0",
-    "lei-utils": "^2.1.0",
-    "rd": "0.0.2",
+    "lei-utils": "^3.1.1",
+    "rd": "1.1.2",
     "shelljs": "^0.7.3"
   }
 }
